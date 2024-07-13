@@ -1,0 +1,45 @@
+/* .movie-app {
+  max-width: 1010px;
+  margin-left: auto;
+  margin-right: auto;
+  background: #ffffff;
+  padding: 0 36px;
+}
+
+.main-wrapper {
+  display: flex;
+  margin-top: 20px;
+  margin-left: 5px;
+  margin-right: auto;
+  margin-bottom: 20px;
+}
+
+.movie-card {
+  display: flex;
+  width: 480px;
+  height: 281px;
+  box-shadow: 0 4px 12px 0 #00000021;
+  margin-right: 36px;
+}
+
+.movie-card:last-child {
+  margin-right: 0;
+}
+
+.movie-poster {
+  margin-right: 20px;
+}
+
+.movie-info {
+  padding-right: 5px;
+}
+
+.poster__img {
+  width: 183px;
+  height: 281px;
+}
+
+.movie-overview {
+  height: 129px;
+  overflow: hidden;
+} */

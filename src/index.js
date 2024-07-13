@@ -1,7 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 
-import MovieApp from "./components/MovieApp/MovieApp";
+import "./index.css";
+import MovieApp from "./components/MovieApp";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
