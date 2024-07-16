@@ -18,6 +18,7 @@
 }
 
 .movie-info {
+  flex-wrap: no-wrap;
   padding-right: 5px;
   position: relative;
   width: 277px;
@@ -56,11 +57,13 @@
 
 .movie-tags {
   display: flex;
+  flex-wrap: wrap;
 }
 
 .tags__item {
   font-size: 12px;
   margin-right: 10px;
+  margin-bottom: 5px;
 
   padding: 2px 5px;
 

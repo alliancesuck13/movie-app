@@ -1,13 +1,11 @@
 /* eslint-disable react/prefer-stateless-function */
 import React from "react";
-import { Pagination, Col, Row } from "antd";
 
+import Movies from "../Movies";
+import MoviePagination from "../MoviePagination";
 import Header from "../Header";
-import MovieCard from "../MovieCard";
 import MovieService from "../../services/MovieService";
 import "./MovieApp.css";
-
-// todo: get the genres list on load page and put it in the state !!!
 
 class MovieApp extends React.Component {
   constructor() {
@@ -15,21 +13,39 @@ class MovieApp extends React.Component {
 
     this.state = {
       movies: [],
+      genres: [],
       pages: 0,
       currentPage: 0,
       query: "",
       isPaginationShow: false,
+      isMoviesLoading: false,
+      isPagesLoading: false,
+      // isLoading: {movies: }
     };
+  }
+
+  async componentDidMount() {
+    const ms = new MovieService();
+    const genres = await ms.getGenres();
+    this.setState(() => {
+      return {
+        genres,
+      };
+    });
   }
 
   changeCurrentPage = async (page) => {
     const { query } = this.state;
-    this.searchMovie(query, page);
-    this.setState({ currentPage: page });
+    this.setState({ isPagesLoading: true });
+    await this.searchMovie(query, page);
+    this.setState({ currentPage: page, isPagesLoading: false });
   };
 
   searchMovie = async (searchQuery = "", page = 1) => {
     const ms = new MovieService();
+
+    this.setState({ isMoviesLoading: true, isPagesLoading: true });
+
     const searchedMovies = await ms.getMovies(searchQuery, page);
     const totalPages = await ms.getPages(searchQuery);
 
@@ -45,6 +61,8 @@ class MovieApp extends React.Component {
         movies: searchedMovies,
         pages: totalPages,
         isPaginationShow: isPaginationShowUpdated,
+        isMoviesLoading: false,
+        isPagesLoading: false,
       };
     });
   };
@@ -52,7 +70,7 @@ class MovieApp extends React.Component {
   handleSearchInput = async (value = "") => {
     const ms = new MovieService();
     const currentPage = await ms.getCurrentPage(value);
-    this.searchMovie(value, currentPage);
+    await this.searchMovie(value, currentPage);
     this.setState(() => {
       const newQuery = value;
       return {
@@ -63,31 +81,31 @@ class MovieApp extends React.Component {
   };
 
   render() {
-    const { movies, pages, currentPage, isPaginationShow } = this.state;
-    const renderMovie = movies.map((movie) => {
-      return (
-        <Col key={movie.id} span={12}>
-          <MovieCard movie={movie} />
-        </Col>
-      );
-    });
+    const {
+      movies,
+      pages,
+      currentPage,
+      isPaginationShow,
+      genres,
+      isMoviesLoading,
+      isPagesLoading,
+    } = this.state;
 
     return (
       <div className="movie-app">
-        <Header onInput={this.handleSearchInput} />
+        <header>
+          <Header onInput={this.handleSearchInput} />
+        </header>
         <main className="main">
-          <div className="main-wrapper">
-            <Row gutter={[35, 35]}>{renderMovie}</Row>
-          </div>
+          <Movies movieList={movies} genres={genres} isMoviesLoading={isMoviesLoading} />
         </main>
         <footer>
-          <Pagination
-            align="center"
-            current={currentPage}
+          <MoviePagination
+            isPagesLoading={isPagesLoading}
+            currentPage={currentPage}
             onChange={this.changeCurrentPage}
-            total={pages}
-            className={!isPaginationShow ? "hide" : ""}
-            showSizeChanger={false}
+            totalPages={pages}
+            isPaginationShow={isPaginationShow}
           />
         </footer>
       </div>

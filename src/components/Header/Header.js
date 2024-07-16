@@ -21,7 +21,7 @@ class Header extends React.Component {
     ];
 
     return (
-      <header>
+      <>
         <Flex justify="center">
           <nav>
             <Tabs defaultActiveKey="1" items={tabs} />
@@ -31,7 +31,7 @@ class Header extends React.Component {
           placeholder="Search movie"
           onChange={debounce((e) => onInput(e.target.value), 400)}
         />
-      </header>
+      </>
     );
   }
 }

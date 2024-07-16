@@ -42,6 +42,13 @@ class MovieService {
       (reason) => reason
     );
   }
+
+  getGenres() {
+    return this.getResource("/genre/movie/list").then(
+      (response) => response.genres,
+      (reason) => reason
+    );
+  }
 }
 
 export default MovieService;
