@@ -1,5 +1,6 @@
 /* eslint-disable react/prefer-stateless-function */
 import React from "react";
+import { Alert } from "antd";
 
 import Movies from "../Movies";
 import MoviePagination from "../MoviePagination";
@@ -25,11 +26,13 @@ class MovieApp extends React.Component {
   }
 
   async componentDidMount() {
+    this.setState({ isMoviesLoading: true });
     const ms = new MovieService();
     const genres = await ms.getGenres();
     this.setState(() => {
       return {
         genres,
+        isMoviesLoading: false,
       };
     });
   }
@@ -46,25 +49,37 @@ class MovieApp extends React.Component {
 
     this.setState({ isMoviesLoading: true, isPagesLoading: true });
 
-    const searchedMovies = await ms.getMovies(searchQuery, page);
-    const totalPages = await ms.getPages(searchQuery);
+    let searchedMovies = [];
+    let totalPages = 0;
 
-    this.setState(() => {
-      let isPaginationShowUpdated = true;
-      if (searchedMovies.length) {
-        isPaginationShowUpdated = true;
-      } else {
-        isPaginationShowUpdated = false;
-      }
+    try {
+      searchedMovies = await ms.getMovies(searchQuery, page);
+      totalPages = await ms.getPages(searchQuery);
 
-      return {
-        movies: searchedMovies,
-        pages: totalPages,
-        isPaginationShow: isPaginationShowUpdated,
-        isMoviesLoading: false,
-        isPagesLoading: false,
-      };
-    });
+      this.setState(() => {
+        return {
+          movies: searchedMovies,
+          pages: totalPages,
+        };
+      });
+    } catch {
+      return;
+    } finally {
+      this.setState(() => {
+        let isPaginationShowUpdated = true;
+        if (searchedMovies.length) {
+          isPaginationShowUpdated = true;
+        } else {
+          isPaginationShowUpdated = false;
+        }
+
+        return {
+          isPaginationShow: isPaginationShowUpdated,
+          isMoviesLoading: false,
+          isPagesLoading: false,
+        };
+      });
+    }
   };
 
   handleSearchInput = async (value = "") => {
@@ -97,7 +112,21 @@ class MovieApp extends React.Component {
           <Header onInput={this.handleSearchInput} />
         </header>
         <main className="main">
-          <Movies movieList={movies} genres={genres} isMoviesLoading={isMoviesLoading} />
+          {!Array.isArray(movies) || !Array.isArray(genres) ? (
+            <Alert
+              message="No connection to server"
+              description={movies.message || genres.message || pages.message}
+              banner="true"
+              type="error"
+              style={{ marginTop: 15, marginBottom: 15 }}
+            />
+          ) : (
+            <Movies
+              movieList={movies}
+              genres={genres}
+              isMoviesLoading={isMoviesLoading}
+            />
+          )}
         </main>
         <footer>
           <MoviePagination
