@@ -45,11 +45,7 @@ class MovieCard extends React.Component {
           </label>
           <ul className="movie-tags">{movieGenres}</ul>
           <label className="movie-overview">{cutOverview(movie.overview)}</label>
-          <Rate
-            count={10}
-            style={{ position: "absolute", bottom: 10, left: 0 }}
-            defaultValue={movie.vote_average.toFixed()}
-          />
+          <Rate count={10} style={{ position: "absolute", bottom: 10, left: 0 }} />
         </div>
       </div>
     );

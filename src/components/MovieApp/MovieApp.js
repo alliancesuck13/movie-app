@@ -1,6 +1,6 @@
 /* eslint-disable react/prefer-stateless-function */
 import React from "react";
-import { Alert } from "antd";
+import { Alert, Flex, Spin } from "antd";
 
 import Movies from "../Movies";
 import MoviePagination from "../MoviePagination";
@@ -21,21 +21,37 @@ class MovieApp extends React.Component {
       isPaginationShow: false,
       isMoviesLoading: false,
       isPagesLoading: false,
-      // isLoading: {movies: }
     };
   }
 
-  async componentDidMount() {
-    this.setState({ isMoviesLoading: true });
-    const ms = new MovieService();
-    const genres = await ms.getGenres();
-    this.setState(() => {
-      return {
-        genres,
-        isMoviesLoading: false,
-      };
-    });
+  componentDidMount() {
+    this.timerID = setInterval(() => {
+      this.getGenres();
+    }, 10000);
   }
+
+  componentWillUnmount() {
+    clearInterval(this.timerID);
+  }
+
+  getGenres = async () => {
+    this.setState({ isMoviesLoading: true });
+    const { genres } = this.state;
+    if (!genres.length) {
+      const ms = new MovieService();
+      const genresList = await ms.getGenres();
+
+      this.setState(() => {
+        return {
+          genres: genresList,
+          isMoviesLoading: false,
+        };
+      });
+    } else {
+      clearInterval(this.timerID);
+      this.setState({ isMoviesLoading: false });
+    }
+  };
 
   changeCurrentPage = async (page) => {
     const { query } = this.state;
@@ -106,6 +122,28 @@ class MovieApp extends React.Component {
       isPagesLoading,
     } = this.state;
 
+    const reloadingAlert = isMoviesLoading ? (
+      <Flex>
+        <Spin
+          size="large"
+          style={{
+            marginLeft: "auto",
+            marginRight: "auto",
+            marginBottom: 15,
+            marginTop: 15,
+          }}
+        />
+      </Flex>
+    ) : (
+      <Alert
+        message="No connection to server"
+        description={movies.message || genres.message || pages.message}
+        banner="true"
+        type="error"
+        style={{ marginTop: 15, marginBottom: 15 }}
+      />
+    );
+
     return (
       <div className="movie-app">
         <header>
@@ -113,13 +151,7 @@ class MovieApp extends React.Component {
         </header>
         <main className="main">
           {!Array.isArray(movies) || !Array.isArray(genres) ? (
-            <Alert
-              message="No connection to server"
-              description={movies.message || genres.message || pages.message}
-              banner="true"
-              type="error"
-              style={{ marginTop: 15, marginBottom: 15 }}
-            />
+            reloadingAlert
           ) : (
             <Movies
               movieList={movies}
