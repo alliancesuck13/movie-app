@@ -4,7 +4,9 @@ import { Rate } from "antd";
 import { format } from "date-fns";
 
 import cutOverview from "../../services/cutOverview";
+
 import "./MovieCard.css";
+import noImage from "./no-image.png";
 
 class MovieCard extends React.Component {
   render() {
@@ -12,9 +14,12 @@ class MovieCard extends React.Component {
 
     const src = movie.poster_path
       ? `https://image.tmdb.org/t/p/original${movie.poster_path}`
-      : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJRS-4chjWMRAmrtz7ivK53K_uygrgjzw9Uw&s";
+      : noImage;
 
     const movieTitleAlt = `${movie.title} poster`;
+
+    const movieRating = movie.vote_average === 10 ? "10" : movie.vote_average.toFixed(1);
+    const movieReleaseDate = movie.release_date ? format(movie.release_date, "PP") : "";
 
     const movieGenres = movie.genre_ids.map((genreId) => {
       return genres.map((genre) => {
@@ -39,10 +44,8 @@ class MovieCard extends React.Component {
           <div className="movie-header">
             <label className="movie-title">{movie.title}</label>
           </div>
-          <label className="movie-rating">{movie.vote_average.toFixed(1)}</label>
-          <label className="movie-date">
-            {movie.release_date ? format(movie.release_date, "PP") : ""}
-          </label>
+          <label className="movie-rating">{movieRating}</label>
+          <label className="movie-date">{movieReleaseDate}</label>
           <ul className="movie-tags">{movieGenres}</ul>
           <label className="movie-overview">{cutOverview(movie.overview)}</label>
           <Rate count={10} style={{ position: "absolute", bottom: 10, left: 0 }} />

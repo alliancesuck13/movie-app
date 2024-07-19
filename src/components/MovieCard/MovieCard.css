@@ -29,6 +29,7 @@
 }
 
 .movie-title {
+  word-wrap: break-word;
   font-size: 20px;
   font-weight: 600;
 }

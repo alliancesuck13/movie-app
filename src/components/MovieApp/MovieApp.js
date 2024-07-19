@@ -25,6 +25,7 @@ class MovieApp extends React.Component {
   }
 
   componentDidMount() {
+    this.getGenres();
     this.timerID = setInterval(() => {
       this.getGenres();
     }, 10000);
@@ -61,6 +62,7 @@ class MovieApp extends React.Component {
   };
 
   searchMovie = async (searchQuery = "", page = 1) => {
+    const { genres } = this.state;
     const ms = new MovieService();
 
     this.setState({ isMoviesLoading: true, isPagesLoading: true });
@@ -68,34 +70,29 @@ class MovieApp extends React.Component {
     let searchedMovies = [];
     let totalPages = 0;
 
-    try {
-      searchedMovies = await ms.getMovies(searchQuery, page);
-      totalPages = await ms.getPages(searchQuery);
+    searchedMovies = await ms.getMovies(searchQuery, page);
+    totalPages = await ms.getPages(searchQuery);
 
-      this.setState(() => {
-        return {
-          movies: searchedMovies,
-          pages: totalPages,
-        };
-      });
-    } catch {
-      return;
-    } finally {
-      this.setState(() => {
-        let isPaginationShowUpdated = true;
-        if (searchedMovies.length) {
-          isPaginationShowUpdated = true;
-        } else {
-          isPaginationShowUpdated = false;
-        }
-
-        return {
-          isPaginationShow: isPaginationShowUpdated,
-          isMoviesLoading: false,
-          isPagesLoading: false,
-        };
-      });
+    if (!genres.length) {
+      this.getGenres();
     }
+
+    this.setState(() => {
+      let isPaginationShowUpdated = true;
+      if (searchedMovies.length) {
+        isPaginationShowUpdated = true;
+      } else {
+        isPaginationShowUpdated = false;
+      }
+
+      return {
+        movies: searchedMovies,
+        pages: totalPages,
+        isPaginationShow: isPaginationShowUpdated,
+        isMoviesLoading: false,
+        isPagesLoading: false,
+      };
+    });
   };
 
   handleSearchInput = async (value = "") => {
@@ -120,6 +117,7 @@ class MovieApp extends React.Component {
       genres,
       isMoviesLoading,
       isPagesLoading,
+      query,
     } = this.state;
 
     const reloadingAlert = isMoviesLoading ? (
@@ -157,6 +155,7 @@ class MovieApp extends React.Component {
               movieList={movies}
               genres={genres}
               isMoviesLoading={isMoviesLoading}
+              query={query}
             />
           )}
         </main>

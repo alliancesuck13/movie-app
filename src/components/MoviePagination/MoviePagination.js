@@ -13,7 +13,7 @@ export default function MoviePagination(props) {
           total={totalPages}
           className={!isPaginationShow ? "hide" : ""}
           showSizeChanger={false}
-          style={{ marginLeft: "auto", marginRight: "auto" }}
+          style={{ marginLeft: "auto", marginRight: "auto", marginBottom: 10 }}
         />
       )}
     </Flex>
