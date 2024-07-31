@@ -9,8 +9,12 @@ import "./MovieCard.css";
 import noImage from "./no-image.png";
 
 class MovieCard extends React.Component {
+  static defaultProps = {
+    isRated: false,
+  };
+
   render() {
-    const { movie, genres } = this.props;
+    const { movie, genres, rating, isRated, onChangeRating } = this.props;
 
     const src = movie.poster_path
       ? `https://image.tmdb.org/t/p/original${movie.poster_path}`
@@ -20,6 +24,12 @@ class MovieCard extends React.Component {
 
     const movieRating = movie.vote_average === 10 ? "10" : movie.vote_average.toFixed(1);
     const movieReleaseDate = movie.release_date ? format(movie.release_date, "PP") : "";
+
+    let rateCountStyle = {};
+    if (movieRating <= 3) rateCountStyle = { borderColor: "#E90000" };
+    if (movieRating >= 3 && movieRating <= 5) rateCountStyle = { borderColor: "#E97E00" };
+    if (movieRating >= 5 && movieRating <= 7) rateCountStyle = { borderColor: "#E9D100" };
+    if (movieRating > 7) rateCountStyle = { borderColor: "#66E900" };
 
     const movieGenres = movie.genre_ids.map((genreId) => {
       return genres.map((genre) => {
@@ -44,11 +54,27 @@ class MovieCard extends React.Component {
           <div className="movie-header">
             <label className="movie-title">{movie.title}</label>
           </div>
-          <label className="movie-rating">{movieRating}</label>
+          <label className="movie-rating" style={rateCountStyle}>
+            {movieRating}
+          </label>
           <label className="movie-date">{movieReleaseDate}</label>
           <ul className="movie-tags">{movieGenres}</ul>
           <label className="movie-overview">{cutOverview(movie.overview)}</label>
-          <Rate count={10} style={{ position: "absolute", bottom: 10, left: 0 }} />
+          {isRated ? (
+            <Rate
+              count={10}
+              defaultValue={rating}
+              disabled
+              style={{ position: "absolute", bottom: 10, left: 0 }}
+            />
+          ) : (
+            <Rate
+              onChange={onChangeRating}
+              allowClear={false}
+              count={10}
+              style={{ position: "absolute", bottom: 10, left: 0 }}
+            />
+          )}
         </div>
       </div>
     );

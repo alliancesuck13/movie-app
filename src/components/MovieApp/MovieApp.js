@@ -1,9 +1,6 @@
 /* eslint-disable react/prefer-stateless-function */
 import React from "react";
-import { Alert, Flex, Spin } from "antd";
 
-import Movies from "../Movies";
-import MoviePagination from "../MoviePagination";
 import Header from "../Header";
 import MovieService from "../../services/MovieService";
 import "./MovieApp.css";
@@ -14,6 +11,7 @@ class MovieApp extends React.Component {
 
     this.state = {
       movies: [],
+      ratedMovies: [],
       genres: [],
       pages: 0,
       currentPage: 0,
@@ -21,19 +19,22 @@ class MovieApp extends React.Component {
       isPaginationShow: false,
       isMoviesLoading: false,
       isPagesLoading: false,
+      sessionId: null,
+      // sessionError: false,
     };
   }
 
   componentDidMount() {
     this.getGenres();
-    this.timerID = setInterval(() => {
-      this.getGenres();
-    }, 10000);
+    this.createGuestSession();
+    // this.timerID = setInterval(() => {
+    //   this.getGenres();
+    // }, 10000);
   }
 
-  componentWillUnmount() {
-    clearInterval(this.timerID);
-  }
+  // componentWillUnmount() {
+  //   clearInterval(this.timerID);
+  // }
 
   getGenres = async () => {
     this.setState({ isMoviesLoading: true });
@@ -50,6 +51,19 @@ class MovieApp extends React.Component {
       });
     } else {
       clearInterval(this.timerID);
+      this.setState({ isMoviesLoading: false });
+    }
+  };
+
+  createGuestSession = async () => {
+    this.setState({ isMoviesLoading: true });
+
+    const movieService = new MovieService();
+    try {
+      const sessionId = await movieService.createGuestSession();
+
+      this.setState({ sessionId, isMoviesLoading: false });
+    } catch (error) {
       this.setState({ isMoviesLoading: false });
     }
   };
@@ -95,6 +109,27 @@ class MovieApp extends React.Component {
     });
   };
 
+  onChangeTab = async (tabKey) => {
+    let ratedMovies = null;
+    if (tabKey === "2") {
+      const { sessionId } = this.state;
+      const movieService = new MovieService();
+      ratedMovies = await movieService.getRatedMovies(sessionId);
+    }
+
+    this.setState(() => {
+      return { ratedMovies };
+    });
+  };
+
+  onChangeRating = async (movieId, value) => {
+    const { sessionId } = this.state;
+    const movieService = new MovieService();
+    const changedRating = await movieService.rateMovie(movieId, sessionId, value);
+
+    return changedRating;
+  };
+
   handleSearchInput = async (value = "") => {
     const ms = new MovieService();
     const currentPage = await ms.getCurrentPage(value);
@@ -118,56 +153,32 @@ class MovieApp extends React.Component {
       isMoviesLoading,
       isPagesLoading,
       query,
+      sessionId,
+      // sessionError,
+      ratedMovies,
     } = this.state;
 
-    const reloadingAlert = isMoviesLoading ? (
-      <Flex>
-        <Spin
-          size="large"
-          style={{
-            marginLeft: "auto",
-            marginRight: "auto",
-            marginBottom: 15,
-            marginTop: 15,
-          }}
-        />
-      </Flex>
-    ) : (
-      <Alert
-        message="No connection to server"
-        description={movies.message || genres.message || pages.message}
-        banner="true"
-        type="error"
-        style={{ marginTop: 15, marginBottom: 15 }}
-      />
-    );
-
+    // if (sessionError) return null;
     return (
       <div className="movie-app">
-        <header>
-          <Header onInput={this.handleSearchInput} />
-        </header>
-        <main className="main">
-          {!Array.isArray(movies) || !Array.isArray(genres) ? (
-            reloadingAlert
-          ) : (
-            <Movies
-              movieList={movies}
-              genres={genres}
-              isMoviesLoading={isMoviesLoading}
-              query={query}
-            />
-          )}
-        </main>
-        <footer>
-          <MoviePagination
-            isPagesLoading={isPagesLoading}
-            currentPage={currentPage}
-            onChange={this.changeCurrentPage}
-            totalPages={pages}
-            isPaginationShow={isPaginationShow}
-          />
-        </footer>
+        <Header
+          onInput={this.handleSearchInput}
+          movieList={movies}
+          genres={genres}
+          isMoviesLoading={isMoviesLoading}
+          query={query}
+          movies={movies}
+          pages={pages}
+          isPagesLoading={isPagesLoading}
+          currentPage={currentPage}
+          onChange={this.changeCurrentPage}
+          totalPages={pages}
+          isPaginationShow={isPaginationShow}
+          sessionId={sessionId}
+          ratedMovies={ratedMovies}
+          onChangeTab={this.onChangeTab}
+          onChangeRating={this.onChangeRating}
+        />
       </div>
     );
   }

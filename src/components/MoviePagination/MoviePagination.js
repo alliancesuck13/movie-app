@@ -3,7 +3,7 @@ import { Pagination, Spin, Flex } from "antd";
 export default function MoviePagination(props) {
   const { isPagesLoading, currentPage, onChange, totalPages, isPaginationShow } = props;
   return (
-    <Flex jusify="center">
+    <Flex>
       {isPagesLoading ? (
         <Spin size="small" style={{ marginLeft: "auto", marginRight: "auto" }} />
       ) : (
