@@ -11,7 +11,6 @@ class Header extends React.Component {
     const {
       onInput,
       movies,
-      genres,
       pages,
       isMoviesLoading,
       query,
@@ -19,7 +18,6 @@ class Header extends React.Component {
       currentPage,
       onChange,
       isPaginationShow,
-      // sessionId,
       onChangeTab,
       onChangeRating,
       ratedMovies,
@@ -32,7 +30,6 @@ class Header extends React.Component {
         children: (
           <Movies
             movieList={movies}
-            genres={genres}
             isMoviesLoading={isMoviesLoading}
             query={query}
             movies={movies}
@@ -51,11 +48,7 @@ class Header extends React.Component {
         key: "2",
         label: "Rated",
         children: (
-          <RatedMovies
-            ratedMovieList={ratedMovies}
-            genres={genres}
-            isMoviesLoading={isMoviesLoading}
-          />
+          <RatedMovies ratedMovieList={ratedMovies} isMoviesLoading={isMoviesLoading} />
         ),
       },
     ];

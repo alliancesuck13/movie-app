@@ -3,6 +3,7 @@ import React from "react";
 import { Rate } from "antd";
 import { format } from "date-fns";
 
+import { GenresContext } from "../MovieApp/GenresProvider";
 import cutOverview from "../../services/cutOverview";
 
 import "./MovieCard.css";
@@ -14,7 +15,7 @@ class MovieCard extends React.Component {
   };
 
   render() {
-    const { movie, genres, rating, isRated, onChangeRating } = this.props;
+    const { movie, rating, isRated, onChangeRating } = this.props;
 
     const src = movie.poster_path
       ? `https://image.tmdb.org/t/p/original${movie.poster_path}`
@@ -31,19 +32,25 @@ class MovieCard extends React.Component {
     if (movieRating >= 5 && movieRating <= 7) rateCountStyle = { borderColor: "#E9D100" };
     if (movieRating > 7) rateCountStyle = { borderColor: "#66E900" };
 
-    const movieGenres = movie.genre_ids.map((genreId) => {
-      return genres.map((genre) => {
-        if (genreId === genre.id) {
-          return (
-            <li key={genre.id} className="tags__item">
-              {genre.name}
-            </li>
-          );
-        }
+    const movieGenres = (
+      <GenresContext.Consumer>
+        {(genres) => {
+          return movie.genre_ids.map((genreId) => {
+            return genres.map((genre) => {
+              if (genreId === genre.id) {
+                return (
+                  <li key={genre.id} className="tags__item">
+                    {genre.name}
+                  </li>
+                );
+              }
 
-        return undefined;
-      });
-    });
+              return undefined;
+            });
+          });
+        }}
+      </GenresContext.Consumer>
+    );
 
     return (
       <div className="movie-card">

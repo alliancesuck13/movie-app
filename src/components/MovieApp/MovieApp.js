@@ -3,6 +3,8 @@ import React from "react";
 
 import Header from "../Header";
 import MovieService from "../../services/MovieService";
+
+import GenresProvider from "./GenresProvider";
 import "./MovieApp.css";
 
 class MovieApp extends React.Component {
@@ -12,7 +14,6 @@ class MovieApp extends React.Component {
     this.state = {
       movies: [],
       ratedMovies: [],
-      genres: [],
       pages: 0,
       currentPage: 0,
       query: "",
@@ -20,40 +21,12 @@ class MovieApp extends React.Component {
       isMoviesLoading: false,
       isPagesLoading: false,
       sessionId: null,
-      // sessionError: false,
     };
   }
 
   componentDidMount() {
-    this.getGenres();
     this.createGuestSession();
-    // this.timerID = setInterval(() => {
-    //   this.getGenres();
-    // }, 10000);
   }
-
-  // componentWillUnmount() {
-  //   clearInterval(this.timerID);
-  // }
-
-  getGenres = async () => {
-    this.setState({ isMoviesLoading: true });
-    const { genres } = this.state;
-    if (!genres.length) {
-      const ms = new MovieService();
-      const genresList = await ms.getGenres();
-
-      this.setState(() => {
-        return {
-          genres: genresList,
-          isMoviesLoading: false,
-        };
-      });
-    } else {
-      clearInterval(this.timerID);
-      this.setState({ isMoviesLoading: false });
-    }
-  };
 
   createGuestSession = async () => {
     this.setState({ isMoviesLoading: true });
@@ -76,7 +49,6 @@ class MovieApp extends React.Component {
   };
 
   searchMovie = async (searchQuery = "", page = 1) => {
-    const { genres } = this.state;
     const ms = new MovieService();
 
     this.setState({ isMoviesLoading: true, isPagesLoading: true });
@@ -86,10 +58,6 @@ class MovieApp extends React.Component {
 
     searchedMovies = await ms.getMovies(searchQuery, page);
     totalPages = await ms.getPages(searchQuery);
-
-    if (!genres.length) {
-      this.getGenres();
-    }
 
     this.setState(() => {
       let isPaginationShowUpdated = true;
@@ -149,36 +117,34 @@ class MovieApp extends React.Component {
       pages,
       currentPage,
       isPaginationShow,
-      genres,
       isMoviesLoading,
       isPagesLoading,
       query,
       sessionId,
-      // sessionError,
       ratedMovies,
     } = this.state;
 
-    // if (sessionError) return null;
     return (
       <div className="movie-app">
-        <Header
-          onInput={this.handleSearchInput}
-          movieList={movies}
-          genres={genres}
-          isMoviesLoading={isMoviesLoading}
-          query={query}
-          movies={movies}
-          pages={pages}
-          isPagesLoading={isPagesLoading}
-          currentPage={currentPage}
-          onChange={this.changeCurrentPage}
-          totalPages={pages}
-          isPaginationShow={isPaginationShow}
-          sessionId={sessionId}
-          ratedMovies={ratedMovies}
-          onChangeTab={this.onChangeTab}
-          onChangeRating={this.onChangeRating}
-        />
+        <GenresProvider>
+          <Header
+            onInput={this.handleSearchInput}
+            movieList={movies}
+            isMoviesLoading={isMoviesLoading}
+            query={query}
+            movies={movies}
+            pages={pages}
+            isPagesLoading={isPagesLoading}
+            currentPage={currentPage}
+            onChange={this.changeCurrentPage}
+            totalPages={pages}
+            isPaginationShow={isPaginationShow}
+            sessionId={sessionId}
+            ratedMovies={ratedMovies}
+            onChangeTab={this.onChangeTab}
+            onChangeRating={this.onChangeRating}
+          />
+        </GenresProvider>
       </div>
     );
   }
