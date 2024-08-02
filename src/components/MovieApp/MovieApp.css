@@ -1,7 +1,7 @@
 .movie-app {
   width: 1010px;
-  min-height: min-content;
-  max-height: max-content;
+  /* min-height: min-content; */
+  /* max-height: max-content; */
   margin-left: auto;
   margin-right: auto;
   background: #ffffff;
@@ -18,4 +18,22 @@
 
 .hide {
   display: none;
+}
+
+@media (width < 1010px) {
+  .movie-app {
+    min-width: 420px;
+    width: auto;
+    max-width: 1009px;
+    padding: 0 16px;
+  }
+
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+  }
 }

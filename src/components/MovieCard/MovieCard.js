@@ -68,19 +68,9 @@ class MovieCard extends React.Component {
           <ul className="movie-tags">{movieGenres}</ul>
           <label className="movie-overview">{cutOverview(movie.overview)}</label>
           {isRated ? (
-            <Rate
-              count={10}
-              defaultValue={rating}
-              disabled
-              style={{ position: "absolute", bottom: 10, left: 0 }}
-            />
+            <Rate count={10} defaultValue={rating} disabled />
           ) : (
-            <Rate
-              onChange={onChangeRating}
-              allowClear={false}
-              count={10}
-              style={{ position: "absolute", bottom: 10, left: 0 }}
-            />
+            <Rate onChange={onChangeRating} allowClear={false} count={10} />
           )}
         </div>
       </div>

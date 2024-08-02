@@ -55,7 +55,7 @@ class MovieService {
   getRatedMovies(sessionId) {
     return this.getResource(`/guest_session/${sessionId}/rated/movies`).then(
       (response) => response.results,
-      (reason) => reason
+      (reason) => reason.message
     );
   }
 

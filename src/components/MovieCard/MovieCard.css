@@ -1,7 +1,7 @@
 .movie-card {
   display: flex;
-  width: 480px;
-  min-height: 281px;
+  max-width: 480px;
+  max-height: 281px;
   box-shadow: 0 4px 12px 0 #00000021;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -9,7 +9,7 @@
 .movie-poster {
   margin-right: 20px;
   width: 183px;
-  height: 281px;
+  max-height: 281px;
 }
 
 .poster__img {
@@ -47,7 +47,6 @@
 
 .movie-overview {
   height: 129px;
-  overflow: hidden;
   font-size: 12px;
 }
 
@@ -57,6 +56,8 @@
 }
 
 .movie-tags {
+  margin-top: 5px;
+  margin-bottom: 0;
   display: flex;
   flex-wrap: wrap;
 }
@@ -72,4 +73,100 @@
   background-color: #fafafa;
   border: 1px solid #d9d9d9;
   border-radius: 3px;
+}
+
+.ant-rate {
+  position: absolute;
+  bottom: 10px;
+  left: 0px;
+}
+
+@media (width < 1010px) {
+  .movie-card {
+    display: flex;
+    max-width: 388px;
+    min-height: 245px;
+    margin-right: auto;
+    margin-left: auto;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 12px 0 #00000021;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .movie-poster {
+    margin-right: 13px;
+    width: 60px;
+    height: 91px;
+  }
+
+  .poster__img {
+    width: 60px;
+    height: 91px;
+  }
+
+  .movie-info {
+    flex-wrap: no-wrap;
+    padding-right: 5px;
+    position: relative;
+    min-width: 304px;
+  }
+  .movie-header {
+    width: 280px;
+  }
+
+  .movie-title {
+    width: 100px;
+    word-wrap: break-word;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .movie-rating {
+    padding: 6px;
+    border: 2px solid #e9d100;
+    border-radius: 100%;
+    font-size: 12px;
+
+    position: absolute;
+    top: 5px;
+    right: 5px;
+  }
+
+  .movie-overview {
+    height: auto;
+    overflow: hidden;
+    font-size: 12px;
+    position: absolute;
+    transform: translateY(35px);
+    left: -60px;
+  }
+
+  .movie-date {
+    color: #827e7e;
+    font-size: 12px;
+  }
+
+  .movie-tags {
+    margin-bottom: 0;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .tags__item {
+    font-size: 12px;
+    margin-right: 10px;
+    margin-bottom: 5px;
+
+    padding: 0 5px;
+
+    color: #000000a6;
+    background-color: #fafafa;
+    border: 1px solid #d9d9d9;
+    border-radius: 3px;
+  }
+
+  .ant-rate {
+    position: absolute;
+    left: 35px;
+  }
 }

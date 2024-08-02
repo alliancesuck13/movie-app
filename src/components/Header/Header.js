@@ -21,6 +21,7 @@ class Header extends React.Component {
       onChangeTab,
       onChangeRating,
       ratedMovies,
+      windowWidth,
     } = this.props;
 
     const tabs = [
@@ -41,6 +42,7 @@ class Header extends React.Component {
             totalPages={pages}
             isPaginationShow={isPaginationShow}
             onChangeRating={onChangeRating}
+            windowWidth={windowWidth}
           />
         ),
       },
@@ -48,7 +50,11 @@ class Header extends React.Component {
         key: "2",
         label: "Rated",
         children: (
-          <RatedMovies ratedMovieList={ratedMovies} isMoviesLoading={isMoviesLoading} />
+          <RatedMovies
+            ratedMovieList={ratedMovies}
+            isMoviesLoading={isMoviesLoading}
+            windowWidth={windowWidth}
+          />
         ),
       },
     ];
@@ -57,7 +63,7 @@ class Header extends React.Component {
       <Tabs
         defaultActiveKey="1"
         items={tabs}
-        style={{ marginLeft: "auto", marginRight: "auto" }}
+        style={{ marginLeft: "auto", marginRight: "auto", width: "100%" }}
         onChange={onChangeTab}
       />
     );

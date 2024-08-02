@@ -19,6 +19,7 @@ export default class Movies extends React.Component {
       pages,
       isPaginationShow,
       onChangeRating,
+      windowWidth,
     } = this.props;
 
     const alertDescription = `Nothing was found for the query "${query}"`;
@@ -43,26 +44,47 @@ export default class Movies extends React.Component {
     let renderMovie = [];
     let reloadingAlert = null;
     let render = null;
+    let renderSpinOrMovies = null;
 
     try {
-      renderMovie = movieList.map((movie) => {
-        return (
-          <Col key={movie.id} span={12}>
+      if (windowWidth > 1010) {
+        renderMovie = movieList.map((movie) => {
+          return (
+            <Col key={movie.id} span={12}>
+              <MovieCard
+                movie={movie}
+                onChangeRating={(value) => onChangeRating.call(this, movie.id, value)}
+              />
+            </Col>
+          );
+        });
+        renderSpinOrMovies = isMoviesLoading ? (
+          <Spin
+            size="large"
+            style={{ marginLeft: "auto", marginRight: "auto", marginBottom: 15 }}
+          />
+        ) : (
+          <Row gutter={[35, 35]}>{renderMovie}</Row>
+        );
+      } else {
+        renderMovie = movieList.map((movie) => {
+          return (
             <MovieCard
+              key={movie.id}
               movie={movie}
               onChangeRating={(value) => onChangeRating.call(this, movie.id, value)}
             />
-          </Col>
+          );
+        });
+        renderSpinOrMovies = isMoviesLoading ? (
+          <Spin
+            size="large"
+            style={{ marginLeft: "auto", marginRight: "auto", marginBottom: 15 }}
+          />
+        ) : (
+          renderMovie
         );
-      });
-      const renderSpinOrMovies = isMoviesLoading ? (
-        <Spin
-          size="large"
-          style={{ marginLeft: "auto", marginRight: "auto", marginBottom: 15 }}
-        />
-      ) : (
-        <Row gutter={[35, 35]}>{renderMovie}</Row>
-      );
+      }
 
       render = movieList.length ? renderSpinOrMovies : renderSpinOrAlert;
     } catch {

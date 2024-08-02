@@ -21,12 +21,22 @@ class MovieApp extends React.Component {
       isMoviesLoading: false,
       isPagesLoading: false,
       sessionId: null,
+      windowWidth: window.outerWidth,
     };
   }
 
   componentDidMount() {
     this.createGuestSession();
+    window.addEventListener("resize", this.handleResize);
   }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.handleResize);
+  }
+
+  handleResize = () => {
+    this.setState({ windowWidth: window.outerWidth });
+  };
 
   createGuestSession = async () => {
     this.setState({ isMoviesLoading: true });
@@ -122,6 +132,7 @@ class MovieApp extends React.Component {
       query,
       sessionId,
       ratedMovies,
+      windowWidth,
     } = this.state;
 
     return (
@@ -143,6 +154,7 @@ class MovieApp extends React.Component {
             ratedMovies={ratedMovies}
             onChangeTab={this.onChangeTab}
             onChangeRating={this.onChangeRating}
+            windowWidth={windowWidth}
           />
         </GenresProvider>
       </div>
