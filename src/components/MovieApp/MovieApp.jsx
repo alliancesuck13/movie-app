@@ -1,7 +1,9 @@
 /* eslint-disable react/prefer-stateless-function */
 import React from "react";
+import { Alert } from "antd";
 
 import Header from "../Header";
+import NetworkState from "../ServicesComponents/NetworkState";
 import MovieService from "../../services/MovieService";
 
 import GenresProvider from "./GenresProvider";
@@ -22,6 +24,7 @@ class MovieApp extends React.Component {
       isPagesLoading: false,
       sessionId: null,
       windowWidth: window.outerWidth,
+      network: true,
     };
   }
 
@@ -33,6 +36,10 @@ class MovieApp extends React.Component {
   componentWillUnmount() {
     window.removeEventListener("resize", this.handleResize);
   }
+
+  onNetworkState = () => {
+    this.setState((prevState) => ({ network: !prevState.network }));
+  };
 
   handleResize = () => {
     this.setState({ windowWidth: window.outerWidth });
@@ -133,31 +140,40 @@ class MovieApp extends React.Component {
       sessionId,
       ratedMovies,
       windowWidth,
+      network,
     } = this.state;
 
     return (
-      <div className="movie-app">
-        <GenresProvider>
-          <Header
-            onInput={this.handleSearchInput}
-            movieList={movies}
-            isMoviesLoading={isMoviesLoading}
-            query={query}
-            movies={movies}
-            pages={pages}
-            isPagesLoading={isPagesLoading}
-            currentPage={currentPage}
-            onChange={this.changeCurrentPage}
-            totalPages={pages}
-            isPaginationShow={isPaginationShow}
-            sessionId={sessionId}
-            ratedMovies={ratedMovies}
-            onChangeTab={this.onChangeTab}
-            onChangeRating={this.onChangeRating}
-            windowWidth={windowWidth}
-          />
-        </GenresProvider>
-      </div>
+      <>
+        <NetworkState onNetworkState={this.onNetworkState} />
+
+        {network ? (
+          <div className="movie-app">
+            <GenresProvider>
+              <Header
+                onInput={this.handleSearchInput}
+                movieList={movies}
+                isMoviesLoading={isMoviesLoading}
+                query={query}
+                movies={movies}
+                pages={pages}
+                isPagesLoading={isPagesLoading}
+                currentPage={currentPage}
+                onChange={this.changeCurrentPage}
+                totalPages={pages}
+                isPaginationShow={isPaginationShow}
+                sessionId={sessionId}
+                ratedMovies={ratedMovies}
+                onChangeTab={this.onChangeTab}
+                onChangeRating={this.onChangeRating}
+                windowWidth={windowWidth}
+              />
+            </GenresProvider>
+          </div>
+        ) : (
+          <Alert className="alert alert-net" message="Losed internet connection" />
+        )}
+      </>
     );
   }
 }
