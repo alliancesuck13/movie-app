@@ -1,6 +1,6 @@
 .movie-card {
   display: flex;
-  max-width: 480px;
+  width: 480px;
   max-height: 281px;
   box-shadow: 0 4px 12px 0 #00000021;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
